@@ -46,4 +46,4 @@ hooks:
 crons:
     drupal:
         spec: "*/20 * * * *"
-        cmd: "cd public ; drush core-cron"
+        cmd: "cd public/subpath ; drush core-cron"
