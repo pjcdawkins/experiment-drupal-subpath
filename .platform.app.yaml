@@ -20,7 +20,6 @@ web:
 disk: 2048
 
 mounts:
-    # Make sure the public files directory is under the document root.
     "/public/subpath/sites/default/files": "shared:files/files"
     "/tmp": "shared:files/tmp"
     "/private": "shared:files/private"
