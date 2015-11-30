@@ -1,0 +1,49 @@
+name: php
+
+type: php:5.6
+
+build:
+    flavor: drupal
+
+dependencies:
+    php:
+        "drush/drush": "dev-master"
+
+relationships:
+    database: "mysql:mysql"
+
+web:
+    document_root: "/public"
+    passthru: "/subpath/index.php"
+    index_files: ["index.php"]
+
+disk: 2048
+
+mounts:
+    # Make sure the public files directory is under the document root.
+    "/public/subpath/sites/default/files": "shared:files/files"
+    "/tmp": "shared:files/tmp"
+    "/private": "shared:files/private"
+
+hooks:
+    build: |
+      # The subpath directory should exist already because it was created via
+      # the public files mount.
+      mkdir -p public/subpath
+
+      # Move everything in 'public' into the subpath directory. This is lengthy
+      # because public/subpath/sites/default/files already exists.
+      mv public/* public/subpath/ 2>/dev/null || true
+      mv public/sites/* public/subpath/sites/ 2>/dev/null || true
+      mv public/sites/default/* public/subpath/sites/default/ 2>/dev/null || true
+      rmdir public/sites/default
+      rmdir public/sites
+
+    deploy: |
+      cd public/subpath
+      drush -y updatedb
+
+crons:
+    drupal:
+        spec: "*/20 * * * *"
+        cmd: "cd public ; drush core-cron"

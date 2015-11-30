@@ -1,0 +1,3 @@
+"http://{default}/subpath":
+    type: upstream
+    upstream: "php:php"
